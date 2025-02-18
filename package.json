@@ -6,13 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
     "lint": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,css,md}\"",
-    "docs": "jsdoc -c jsdoc.conf.json"
-  },
-  "dependencies": {
-    "react": "18",
-    "react-dom": "18"
+    "docs": "jsdoc -c jsdoc.conf.json",
+    "preview": "vite preview"
   }
 }
