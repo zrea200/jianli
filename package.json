@@ -6,9 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --fix",
-    "format": "prettier --write \"src/**/*.{js,jsx,css,md}\"",
-    "docs": "jsdoc -c jsdoc.conf.json",
     "preview": "vite preview"
   }
 }

@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import useResumeStore from '../stores/resumeStore';
+import styled from "styled-components";
+import useResumeStore from "../stores/resumeStore";
 
 const Panel = styled.div`
   background: white;
@@ -17,7 +17,7 @@ const Button = styled.button`
   background: #1a73e8;
   color: white;
   cursor: pointer;
-  
+
   &:hover {
     background: #1557b0;
   }
@@ -32,10 +32,10 @@ const RightPanel = () => {
       <Button>预览</Button>
       <Button>导出 PDF</Button>
       <Button>导入模板</Button>
-      
+
       <h3>样式设置</h3>
-      <select 
-        value={styles.fontSize} 
+      <select
+        value={styles.fontSize}
         onChange={(e) => updateStyles({ fontSize: e.target.value })}
       >
         <option value="12px">小号</option>

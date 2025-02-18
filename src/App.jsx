@@ -1,10 +1,10 @@
-import { DndContext } from '@dnd-kit/core';
-import styled from 'styled-components';
-import GlobalStyles from './styles/GlobalStyles';
-import LeftPanel from './components/LeftPanel';
-import ResumePreview from './components/ResumePreview';
-import RightPanel from './components/RightPanel';
-import useResumeStore from './stores/resumeStore';
+import { DndContext } from "@dnd-kit/core";
+import styled from "styled-components";
+import GlobalStyles from "./styles/GlobalStyles";
+import LeftPanel from "./components/LeftPanel";
+import ResumePreview from "./components/ResumePreview";
+import RightPanel from "./components/RightPanel";
+import useResumeStore from "./stores/resumeStore";
 
 const AppContainer = styled.div`
   display: grid;
@@ -20,11 +20,11 @@ function App() {
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (over && over.id === 'resume-drop-area') {
+    if (over && over.id === "resume-drop-area") {
       addComponent({
         id: `${active.data.current.type}-${Date.now()}`,
         type: active.data.current.type,
-        data: {}
+        data: {},
       });
     }
   };
