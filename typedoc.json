@@ -1,0 +1,8 @@
+{
+  "entryPoints": ["src"],
+  "out": "docs",
+  "exclude": ["**/node_modules/**"],
+  "plugin": ["typedoc-plugin-markdown"],
+  "theme": "default",
+  "name": "简历生成器文档"
+}

@@ -1,3 +1,7 @@
+/**
+ * 根元素样式
+ * @description 设置页面的最大宽度和居中对齐
+ */
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,19 +9,37 @@
   text-align: center;
 }
 
+/**
+ * Logo 基础样式
+ * @description 设置 logo 的基本尺寸和过渡效果
+ */
 .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
+
+/**
+ * Logo 悬停效果
+ * @description 添加紫色阴影效果
+ */
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
+/**
+ * React Logo 特殊悬停效果
+ * @description 添加蓝色阴影效果
+ */
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+/**
+ * Logo 旋转动画关键帧
+ * @description 定义 360 度旋转动画
+ */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -27,16 +49,29 @@
   }
 }
 
+/**
+ * 动画偏好设置
+ * @description 仅在用户未设置减少动画时应用旋转动画
+ * @media 检查用户的动画偏好设置
+ */
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
 }
 
+/**
+ * 卡片容器样式
+ * @description 设置卡片的内边距
+ */
 .card {
   padding: 2em;
 }
 
+/**
+ * 文档链接样式
+ * @description 设置文档链接的颜色为灰色
+ */
 .read-the-docs {
   color: #888;
 }
