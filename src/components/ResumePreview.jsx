@@ -39,7 +39,7 @@ const ResumePreview = () => {
   };
 
   return (
-    <PreviewContainer ref={setNodeRef}>
+    <PreviewContainer ref={setNodeRef} className="resume-preview">
       {components.map((component) => (
         <ComponentWrapper key={component.id}>
           {renderComponent(component)}
