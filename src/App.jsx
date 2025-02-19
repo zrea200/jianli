@@ -36,9 +36,10 @@ function App() {
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (over && over.id === "resume-drop-area") {
-      addComponent({
-        id: `${active.data.current.type}-${Date.now()}`,
-        type: active.data.current.type,
+      const componentId = `personal_info-${Date.now()}`;
+      const newComponent = {
+        id: componentId,
+        type: "personal_info",
         data: {
           name: "",
           phone: "",
@@ -46,7 +47,9 @@ function App() {
           address: "",
           description: ""
         }
-      });
+      };
+      console.log('Creating new component:', newComponent); // 添加这行
+      addComponent(newComponent);
     }
   };
 

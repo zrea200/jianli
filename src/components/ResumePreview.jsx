@@ -45,7 +45,7 @@ const ResumePreview = ({ isPreview = false }) => {
   const renderComponent = (component) => {
     switch (component.type) {
       case "personal_info":
-        return <PersonalInfo data={component.data} />;
+        return <PersonalInfo data={component} />; // 传递整个 component 对象
       default:
         return null;
     }

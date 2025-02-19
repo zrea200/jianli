@@ -54,17 +54,32 @@ const Input = styled.input`
   }
 `;
 const PersonalInfo = ({ data }) => {
+  // 组件接收到的 props
+  console.log('PersonalInfo - Received props:', data);
   const { updateComponent } = useResumeStore();
 
   const handleChange = (field, value) => {
-    updateComponent({
-      ...data,
+    if (!data || !data.id) {
+      console.error('PersonalInfo - Invalid data structure:', data);
+      return;
+    }
+    
+    // 更新时的数据结构
+    const updatedData = {
+      id: data.id,
+      type: data.type || "personal_info",
       data: {
         ...data.data,
         [field]: value,
       }
-    });
+    };
+    
+    console.log('PersonalInfo - Updating with:', updatedData);
+    updateComponent(updatedData);
   };
+
+  // 在渲染前记录当前的数据状态
+  console.log('PersonalInfo - Current data state:', data?.data);
 
   return (
     <Container>

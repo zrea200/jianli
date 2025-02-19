@@ -18,40 +18,24 @@ const useResumeStore = create((set) => ({
 
   // 添加新组件到简历
   addComponent: (component) =>
-    set((state) => ({
-      components: [...state.components, component],
-    })),
-
-  // 根据 ID 删除组件
-  removeComponent: (id) =>
-    set((state) => ({
-      components: state.components.filter((c) => c.id !== id),
-    })),
-
-  // 更新组件顺序（用于拖拽排序）
-  updateComponent: (updatedComponent) =>
-    set((state) => ({
-      components: state.components.map((comp) =>
-        comp.id === updatedComponent.id ? {
-          ...comp,
-          data: {
-            ...comp.data,
-            ...updatedComponent.data
-          }
-        } : comp
-      ),
-    })),
-  // 设置当前活动组件（用于编辑）
-  setActiveComponent: (component) =>
-    set({
-      activeComponent: component,
+    set((state) => {
+      console.log('Store - Adding component:', component);
+      console.log('Store - Current state:', state.components);
+      return {
+        components: [...state.components, component],
+      };
     }),
 
-  // 更新全局样式配置
-  updateStyles: (newStyles) =>
-    set((state) => ({
-      styles: { ...state.styles, ...newStyles },
-    })),
+  updateComponent: (updatedComponent) =>
+    set((state) => {
+      console.log('Store - Updating component:', updatedComponent);
+      console.log('Store - Current state:', state.components);
+      return {
+        components: state.components.map((comp) =>
+          comp.id === updatedComponent.id ? updatedComponent : comp
+        ),
+      };
+    }),
 }));
 
 // 导出状态管理 hook
