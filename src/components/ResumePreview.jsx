@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useDroppable } from "@dnd-kit/core";
 import useResumeStore from "../stores/resumeStore";
 import PersonalInfo from "./ResumeComponents/PersonalInfo";
+import PropTypes from "prop-types";
 
 const PreviewContainer = styled.div`
   width: 21cm;
@@ -22,7 +23,7 @@ const ComponentWrapper = styled.div`
   }
 `;
 
-const ResumePreview = () => {
+const ResumePreview = ({ isPreview = false }) => {
   const { components } = useResumeStore();
   const { setNodeRef } = useDroppable({
     id: "resume-drop-area",
@@ -32,14 +33,16 @@ const ResumePreview = () => {
     switch (component.type) {
       case "personal_info":
         return <PersonalInfo data={component.data} />;
-      // 其他组件类型的渲染将在后续添加
       default:
         return null;
     }
   };
 
   return (
-    <PreviewContainer ref={setNodeRef} className="resume-preview">
+    <PreviewContainer 
+      ref={!isPreview ? setNodeRef : undefined} 
+      className="resume-preview"
+    >
       {components.map((component) => (
         <ComponentWrapper key={component.id}>
           {renderComponent(component)}
@@ -47,6 +50,10 @@ const ResumePreview = () => {
       ))}
     </PreviewContainer>
   );
+};
+
+ResumePreview.propTypes = {
+  isPreview: PropTypes.bool
 };
 
 export default ResumePreview;

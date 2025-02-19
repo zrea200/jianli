@@ -1,8 +1,10 @@
 import styled from "styled-components";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import useResumeStore from "../stores/resumeStore";
+import PreviewModal from "./PreviewModal";
+import ResumePreview from "./ResumePreview";
 
 const Panel = styled.div`
   background: white;
@@ -26,70 +28,37 @@ const Button = styled.button`
   }
 `;
 
-const PreviewModal = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-`;
-
-const PreviewContent = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 90%;
-  max-height: 90vh;
-  overflow: auto;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: white;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 50%;
-`;
-
 const RightPanel = () => {
   const { styles, updateStyles } = useResumeStore();
   const [showPreview, setShowPreview] = useState(false);
-  
-  const handlePreview = () => {
-    setShowPreview(true);
-  };
 
   const handleExportPDF = async () => {
     const resumeElement = document.querySelector('.resume-preview');
     if (!resumeElement) return;
 
-    const canvas = await html2canvas(resumeElement, {
-      scale: 2,
-      useCORS: true,
-      logging: false
-    });
+    try {
+      const canvas = await html2canvas(resumeElement, {
+        scale: 2,
+        useCORS: true,
+        logging: false
+      });
 
-    const imgData = canvas.toDataURL('image/jpeg', 1.0);
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-    
-    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save('我的简历.pdf');
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('我的简历.pdf');
+    } catch (error) {
+      console.error('导出PDF失败:', error);
+    }
   };
 
   return (
     <Panel>
       <h3>操作</h3>
-      <Button onClick={handlePreview}>预览</Button>
+      <Button onClick={() => setShowPreview(true)}>预览</Button>
       <Button onClick={handleExportPDF}>导出 PDF</Button>
       <Button>导入模板</Button>
 
@@ -104,14 +73,8 @@ const RightPanel = () => {
       </select>
 
       {showPreview && (
-        <PreviewModal onClick={() => setShowPreview(false)}>
-          <PreviewContent onClick={e => e.stopPropagation()}>
-            <CloseButton onClick={() => setShowPreview(false)}>✕</CloseButton>
-            <div className="resume-preview">
-              {/* 这里将插入简历预览内容的克隆 */}
-              {document.querySelector('.resume-preview')?.cloneNode(true)}
-            </div>
-          </PreviewContent>
+        <PreviewModal onClose={() => setShowPreview(false)}>
+          <ResumePreview isPreview={true} />
         </PreviewModal>
       )}
     </Panel>
