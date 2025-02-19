@@ -53,9 +53,39 @@ const Input = styled.input`
     box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
   }
 `;
+// 添加 TextArea 样式组件
+const TextArea = styled.textarea`
+  width: 100%;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  background: transparent;
+  transition: all 0.3s ease;
+  resize: none;
+  overflow: hidden;
+  min-height: 40px;
+  height: auto;
+
+  &:hover {
+    border-color: #ddd;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #1a73e8;
+    background: white;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+  }
+`;
 const PersonalInfo = ({ data }) => {
   // 组件接收到的 props
   const { updateComponent } = useResumeStore();
+
+  const autoResize = (e) => {
+    e.target.style.height = 'auto';
+    e.target.style.height = e.target.scrollHeight + 'px';
+  };
 
   const handleChange = (field, value) => {
     if (!data || !data.id) {
@@ -113,11 +143,15 @@ const PersonalInfo = ({ data }) => {
           />
         </Field>
       </Grid>
+      {/* // 在 return 语句中替换个人简介的 Input 为 TextArea */}
       <Field>
-        <Input
-          type="text"
+        <TextArea
           value={data.data?.description || ""}
-          onChange={(e) => handleChange("description", e.target.value)}
+          onChange={(e) => {
+            handleChange("description", e.target.value);
+            autoResize(e);
+          }}
+          onInput={autoResize}
           placeholder="个人简介"
         />
       </Field>

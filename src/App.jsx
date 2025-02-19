@@ -13,18 +13,11 @@ import useResumeStore from "./stores/resumeStore";
 
 // 使用 styled-components 定义应用容器样式
 const AppContainer = styled.div`
-  // 使用 CSS Grid 布局，将页面分为三列
   display: grid;
-  // 左右面板固定 250px，中间自适应
   grid-template-columns: 250px 1fr 250px;
-  // 设置容器高度为全屏
-  height: 100vh;
-  // 设置列间距
+  flex: 1;
   gap: 1rem;
-  // 设置内边距
   padding: 1rem;
-  // 设置背景色
-  background-color: #f5f5f5;
 `;
 
 // 主应用组件
