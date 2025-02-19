@@ -34,7 +34,10 @@ const useResumeStore = create((set) => ({
       components: state.components.map((comp) =>
         comp.id === updatedComponent.id ? {
           ...comp,
-          data: updatedComponent.data
+          data: {
+            ...comp.data,
+            ...updatedComponent.data
+          }
         } : comp
       ),
     })),

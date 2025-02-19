@@ -34,24 +34,18 @@ function App() {
 
   // 处理拖拽结束事件的回调函数
   const handleDragEnd = (event) => {
-    // 解构获取拖拽元素和目标区域的信息
     const { active, over } = event;
-    // 判断是否拖入指定的放置区域
     if (over && over.id === "resume-drop-area") {
-      // 添加新组件到简历中
       addComponent({
-        // 使用组件类型和时间戳生成唯一 ID
         id: `${active.data.current.type}-${Date.now()}`,
-        // 设置组件类型
         type: active.data.current.type,
-        // 初始化空数据对象
         data: {
           name: "",
           phone: "",
           email: "",
           address: "",
           description: ""
-        },
+        }
       });
     }
   };

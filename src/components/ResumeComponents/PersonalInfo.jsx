@@ -62,7 +62,7 @@ const PersonalInfo = ({ data }) => {
       data: {
         ...data.data,
         [field]: value,
-      },
+      }
     });
   };
 
