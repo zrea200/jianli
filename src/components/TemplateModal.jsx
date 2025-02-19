@@ -10,6 +10,7 @@ const Modal = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  min-width: 300px;
 `;
 
 const Overlay = styled.div`
@@ -26,9 +27,7 @@ const TemplateModal = ({ children, onClose }) => {
   return (
     <>
       <Overlay onClick={onClose} />
-      <Modal>
-        {children}
-      </Modal>
+      <Modal>{children}</Modal>
     </>
   );
 };
