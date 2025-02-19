@@ -37,11 +37,10 @@ const Button = styled.button`
 
 // 右侧面板组件
 const RightPanel = () => {
-  // 从状态管理中获取样式相关的状态和方法
-  const { styles, updateStyles } = useResumeStore();
-  // 控制预览模态框的显示状态
+  // 从状态管理中获取所需的状态和方法
+  const { styles, updateStyles, saveToLocalStorage } = useResumeStore();
   const [showPreview, setShowPreview] = useState(false);
-
+  
   // 处理导出 PDF 的函数
   const handleExportPDF = async () => {
     // 获取简历预览区域的 DOM 元素
@@ -80,6 +79,7 @@ const RightPanel = () => {
       <h3>操作</h3>
       <Button onClick={() => setShowPreview(true)}>预览</Button>
       <Button onClick={handleExportPDF}>导出 PDF</Button>
+      <Button onClick={saveToLocalStorage}>保存数据</Button>
       <Button>导入模板</Button>
 
       {/* 样式设置区域 */}
