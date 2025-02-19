@@ -11,7 +11,7 @@ import useResumeStore from "../../stores/resumeStore";
 // 定义基础容器样式
 const Container = styled.div`
   padding: 20px;
-  border-bottom: 1px solid #eee;  // 添加底部分隔线
+  /* border-bottom: 1px solid #eee;  // 添加底部分隔线 */
 `;
 
 // 定义三列网格布局

@@ -49,9 +49,7 @@ const LeftPanel = () => {
   // 定义可用的简历组件列表
   const components = [
     { id: "personal", type: "personal_info", label: "个人信息" },
-    { id: "education", type: "education", label: "教育经历" },
-    { id: "experience", type: "experience", label: "工作经验" },
-    { id: "skills", type: "skills", label: "技能特长" },
+
   ];
 
   return (
