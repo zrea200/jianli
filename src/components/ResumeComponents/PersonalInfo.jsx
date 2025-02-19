@@ -55,7 +55,6 @@ const Input = styled.input`
 `;
 const PersonalInfo = ({ data }) => {
   // 组件接收到的 props
-  console.log('PersonalInfo - Received props:', data);
   const { updateComponent } = useResumeStore();
 
   const handleChange = (field, value) => {
@@ -74,12 +73,9 @@ const PersonalInfo = ({ data }) => {
       }
     };
     
-    console.log('PersonalInfo - Updating with:', updatedData);
     updateComponent(updatedData);
   };
 
-  // 在渲染前记录当前的数据状态
-  console.log('PersonalInfo - Current data state:', data?.data);
 
   return (
     <Container>

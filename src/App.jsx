@@ -48,7 +48,7 @@ function App() {
           description: ""
         }
       };
-      console.log('Creating new component:', newComponent); // 添加这行
+
       addComponent(newComponent);
     }
   };

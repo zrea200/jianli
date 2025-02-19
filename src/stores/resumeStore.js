@@ -19,8 +19,6 @@ const useResumeStore = create((set) => ({
   // 添加新组件到简历
   addComponent: (component) =>
     set((state) => {
-      console.log('Store - Adding component:', component);
-      console.log('Store - Current state:', state.components);
       return {
         components: [...state.components, component],
       };
@@ -28,8 +26,6 @@ const useResumeStore = create((set) => ({
 
   updateComponent: (updatedComponent) =>
     set((state) => {
-      console.log('Store - Updating component:', updatedComponent);
-      console.log('Store - Current state:', state.components);
       return {
         components: state.components.map((comp) =>
           comp.id === updatedComponent.id ? updatedComponent : comp
