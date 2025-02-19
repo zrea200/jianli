@@ -45,7 +45,13 @@ function App() {
         // 设置组件类型
         type: active.data.current.type,
         // 初始化空数据对象
-        data: {},
+        data: {
+          name: "",
+          phone: "",
+          email: "",
+          address: "",
+          description: ""
+        },
       });
     }
   };

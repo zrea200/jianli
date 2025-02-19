@@ -1,7 +1,7 @@
 // 导入styled-components库用于组件样式
 import styled from "styled-components";
 import PropTypes from "prop-types"; // 添加这行导入
-
+import useResumeStore from "../../stores/resumeStore";
 // 定义容器组件样式
 // 添加内边距和底部边框
 const Container = styled.div`
@@ -14,13 +14,16 @@ const Container = styled.div`
 const Title = styled.h2`
   margin-bottom: 15px;
   color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 // 定义网格布局组件
 // 使用CSS Grid创建两列布局，设置列间距
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 15px;
 `;
 
@@ -28,56 +31,88 @@ const Grid = styled.div`
 // 为每个信息字段添加下边距
 const Field = styled.div`
   margin-bottom: 10px;
+  position: relative;
 `;
+const Input = styled.input`
+  width: 100%;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  background: transparent;
+  transition: all 0.3s ease;
 
-/**
- * 个人信息展示组件
- * @component
- * @description 用于展示用户的基本个人信息，包括姓名、电话、邮箱和地址
- *
- * @param {Object} props - 组件属性
- * @param {Object} props.data - 个人信息数据
- * @param {string} [props.data.name] - 姓名
- * @param {string} [props.data.phone] - 电话号码
- * @param {string} [props.data.email] - 电子邮箱
- * @param {string} [props.data.address] - 居住地址
- *
- * @example
- * const data = {
- *   name: '张三',
- *   phone: '13800138000',
- *   email: 'zhangsan@example.com',
- *   address: '北京市朝阳区'
- * };
- *
- * return <PersonalInfo data={data} />;
- */
-const PersonalInfo = ({ data = {} }) => {
+  &:hover {
+    border-color: #ddd;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #1a73e8;
+    background: white;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+  }
+`;
+const PersonalInfo = ({ data }) => {
+  const { updateComponent } = useResumeStore();
+
+  const handleChange = (field, value) => {
+    updateComponent({
+      ...data,
+      data: {
+        ...data.data,
+        [field]: value,
+      },
+    });
+  };
+
   return (
     <Container>
-      <Title>个人信息</Title>
+      <Field>
+        <Input
+          type="text"
+          value={data.data?.name || ""}
+          onChange={(e) => handleChange("name", e.target.value)}
+          placeholder="姓名"
+        />
+      </Field>
       <Grid>
-        {/* 姓名字段 - 如果没有数据显示"点击编辑" */}
         <Field>
-          <strong>姓名：</strong> {data.name || "点击编辑"}
+          <Input
+            type="tel"
+            value={data.data?.phone || ""}
+            onChange={(e) => handleChange("phone", e.target.value)}
+            placeholder="电话"
+          />
         </Field>
-        {/* 电话字段 - 如果没有数据显示"点击编辑" */}
         <Field>
-          <strong>电话：</strong> {data.phone || "点击编辑"}
+          <Input
+            type="email"
+            value={data.data?.email || ""}
+            onChange={(e) => handleChange("email", e.target.value)}
+            placeholder="邮箱"
+          />
         </Field>
-        {/* 邮箱字段 - 如果没有数据显示"点击编辑" */}
         <Field>
-          <strong>邮箱：</strong> {data.email || "点击编辑"}
-        </Field>
-        {/* 地址字段 - 如果没有数据显示"点击编辑" */}
-        <Field>
-          <strong>地址：</strong> {data.address || "点击编辑"}
+          <Input
+            type="text"
+            value={data.data?.address || ""}
+            onChange={(e) => handleChange("address", e.target.value)}
+            placeholder="地址"
+          />
         </Field>
       </Grid>
+      <Field>
+        <Input
+          type="text"
+          value={data.data?.description || ""}
+          onChange={(e) => handleChange("description", e.target.value)}
+          placeholder="个人简介"
+        />
+      </Field>
     </Container>
   );
 };
-
 PersonalInfo.propTypes = {
   data: PropTypes.shape({
     name: PropTypes.string,
@@ -85,6 +120,7 @@ PersonalInfo.propTypes = {
     email: PropTypes.string,
     address: PropTypes.string,
   }),
+  onUpdate: PropTypes.func,
 };
 
 export default PersonalInfo;

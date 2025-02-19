@@ -29,11 +29,15 @@ const useResumeStore = create((set) => ({
     })),
 
   // 更新组件顺序（用于拖拽排序）
-  updateComponentOrder: (newOrder) =>
-    set({
-      components: newOrder,
-    }),
-
+  updateComponent: (updatedComponent) =>
+    set((state) => ({
+      components: state.components.map((comp) =>
+        comp.id === updatedComponent.id ? {
+          ...comp,
+          data: updatedComponent.data
+        } : comp
+      ),
+    })),
   // 设置当前活动组件（用于编辑）
   setActiveComponent: (component) =>
     set({
