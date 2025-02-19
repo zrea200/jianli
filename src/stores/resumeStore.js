@@ -69,6 +69,38 @@ const useResumeStore = create((set, get) => ({
             set(parsedData);  // 更新状态
         }
     },
+
+    // 保存为模板
+    saveAsTemplate: (templateName) => {
+      const currentState = {
+        components: get().components,
+        styles: get().styles,
+        name: templateName,
+        createTime: new Date().toISOString()
+      };
+      
+      // 从 localStorage 获取现有模板
+      const existingTemplates = JSON.parse(localStorage.getItem('resumeTemplates') || '[]');
+      
+      // 添加新模板
+      existingTemplates.push(currentState);
+      
+      // 保存回 localStorage
+      localStorage.setItem('resumeTemplates', JSON.stringify(existingTemplates));
+    },
+
+    // 获取所有模板
+    getTemplates: () => {
+      return JSON.parse(localStorage.getItem('resumeTemplates') || '[]');
+    },
+
+    // 导入模板
+    importTemplate: (template) => {
+      set({
+        components: template.components,
+        styles: template.styles
+      });
+    },
 }));
 
 // === 初始化逻辑 ===

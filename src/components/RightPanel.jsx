@@ -1,5 +1,3 @@
-// 右侧面板组件
-// 导入必要的依赖
 import styled from "styled-components";
 import { useState } from "react";
 // 导入 PDF 导出相关的库
@@ -10,6 +8,9 @@ import useResumeStore from "../stores/resumeStore";
 // 导入预览相关组件
 import PreviewModal from "./PreviewModal";
 import ResumePreview from "./ResumePreview";
+// 导入 TemplateModal 和 TemplateList 组件，假设它们存在
+import TemplateModal from "./TemplateModal";
+import TemplateList from "./TemplateList";
 
 // 定义右侧面板容器样式
 const Panel = styled.div`
@@ -35,12 +36,28 @@ const Button = styled.button`
   }
 `;
 
-// 右侧面板组件
+// 定义输入框样式
+const Input = styled.input`
+  width: calc(100% - 1rem);
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
 const RightPanel = () => {
-  // 从状态管理中获取所需的状态和方法
-  const { styles, updateStyles, saveToLocalStorage } = useResumeStore();
+  const {
+    styles,
+    updateStyles,
+    saveToLocalStorage,
+    saveAsTemplate,
+    getTemplates,
+    importTemplate
+  } = useResumeStore();
   const [showPreview, setShowPreview] = useState(false);
-  
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [templateName, setTemplateName] = useState("");
+
   // 处理导出 PDF 的函数
   const handleExportPDF = async () => {
     // 获取简历预览区域的 DOM 元素
@@ -62,17 +79,34 @@ const RightPanel = () => {
       // 获取 PDF 页面尺寸
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      
+
       // 将图片添加到 PDF 中
       pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
       // 保存 PDF 文件
       pdf.save('我的简历.pdf');
     } catch (error) {
-      console.error('导出PDF失败:', error);
+      console.error('导出 PDF 失败:', error);
     }
   };
 
-  // 渲染组件
+  // 处理保存模板
+  const handleSaveTemplate = () => {
+    if (!templateName.trim()) {
+      alert("请输入模板名称");
+      return;
+    }
+    saveAsTemplate(templateName);
+    setTemplateName("");
+    alert("模板保存成功！");
+  };
+
+  // 处理导入模板
+  const handleImportTemplate = (template) => {
+    importTemplate(template);
+    setShowTemplateModal(false);
+    alert("模板导入成功！");
+  };
+
   return (
     <Panel>
       {/* 操作按钮区域 */}
@@ -80,7 +114,7 @@ const RightPanel = () => {
       <Button onClick={() => setShowPreview(true)}>预览</Button>
       <Button onClick={handleExportPDF}>导出 PDF</Button>
       <Button onClick={saveToLocalStorage}>保存数据</Button>
-      <Button>导入模板</Button>
+      <Button onClick={() => setShowTemplateModal(true)}>导入模板</Button>
 
       {/* 样式设置区域 */}
       <h3>样式设置</h3>
@@ -92,6 +126,28 @@ const RightPanel = () => {
         <option value="14px">中号</option>
         <option value="16px">大号</option>
       </select>
+
+      {/* 保存模板区域 */}
+      <h3>保存模板</h3>
+      <div>
+        <Input
+          type="text"
+          value={templateName}
+          onChange={(e) => setTemplateName(e.target.value)}
+          placeholder="输入模板名称"
+        />
+        <Button onClick={handleSaveTemplate}>保存为模板</Button>
+      </div>
+
+      {/* 模板选择弹窗 */}
+      {showTemplateModal && (
+        <TemplateModal onClose={() => setShowTemplateModal(false)}>
+          <TemplateList
+            templates={getTemplates()}
+            onSelect={handleImportTemplate}
+          />
+        </TemplateModal>
+      )}
 
       {/* 预览模态框 */}
       {showPreview && (
