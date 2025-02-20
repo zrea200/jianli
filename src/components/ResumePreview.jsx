@@ -13,13 +13,19 @@ import PropTypes from "prop-types";
 // 定义预览容器样式
 // 使用标准 A4 纸张尺寸和样式
 const PreviewContainer = styled.div`
-  width: 21cm;              // A4 标准宽度
-  min-height: 29.7cm;       // A4 标准高度
-  padding: 2cm;             // 标准页边距
-  margin: 0 auto;           // 水平居中
-  background: white;        // 纸张颜色
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  // 立体效果
-  position: relative;       // 为内部定位提供参考
+  width: 21cm;              
+  min-height: 29.7cm;       
+  padding: 2cm;             
+  margin: 0 auto;           
+  background: white;        
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  
+  // 在预览模式下的特殊样式
+  ${props => props.isPreview && `
+    transform: scale(0.9);
+    transform-origin: top center;
+  `}
 `;
 
 // 定义每个简历组件的包装器样式
@@ -35,11 +41,36 @@ const ComponentWrapper = styled.div`
 
 // 简历预览组件定义
 // isPreview: 用于区分是否为预览模式
-const ResumePreview = ({ isPreview = false }) => {
-  // 从状态管理中获取组件数据和更新方法
-  const { components, updateComponentOrder } = useResumeStore();
-  
-  // 设置可放置区域
+// 定义组件映射表
+const componentMap = {
+  personal_info: PersonalInfo,
+};
+
+const ResumePreview = ({ isPreview = false, previewData }) => {
+  const { components: storeComponents, styles: storeStyles } = useResumeStore();
+  const { components = storeComponents, styles = storeStyles } = previewData || {};
+
+  // 如果是预览模式，渲染简化版本
+  if (isPreview) {
+    return (
+      <PreviewContainer 
+        className="resume-preview"
+        style={{ fontSize: styles.fontSize }}
+        isPreview={true}
+      >
+        {components?.map((component) => {
+          const Component = componentMap[component.type];
+          return Component ? (
+            <ComponentWrapper key={component.id}>
+              <Component data={component} isPreview={true} />
+            </ComponentWrapper>
+          ) : null;
+        })}
+      </PreviewContainer>
+    );
+  }
+
+  // 非预览模式的原有逻辑
   const { setNodeRef } = useDroppable({
     id: "resume-drop-area",
   });

@@ -101,6 +101,12 @@ const useResumeStore = create((set, get) => ({
         styles: template.styles
       });
     },
+    //  删除模板
+  deleteTemplate: (templateName) => {
+    const templates = JSON.parse(localStorage.getItem('resumeTemplates') || '[]');
+    const updatedTemplates = templates.filter(t => t.name !== templateName);
+    localStorage.setItem('resumeTemplates', JSON.stringify(updatedTemplates));
+  },
 }));
 
 // === 初始化逻辑 ===
