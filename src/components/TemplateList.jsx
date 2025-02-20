@@ -7,7 +7,7 @@ const Container = styled.div`
   display: flex;
   gap: 20px;
   height: 100%;
-  overflow: hidden;  // 防止溢出
+  width: 100%;
 `;
 
 const List = styled.div`
@@ -15,7 +15,7 @@ const List = styled.div`
   height: 100%;
   overflow-y: auto;
   border-right: 1px solid #eee;
-  padding-right: 20px;
+  padding: 20px;
 `;
 
 const PreviewContainer = styled.div`
@@ -26,41 +26,60 @@ const PreviewContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  
-  .resume-preview {
-    margin: 20px 0;
-  }
+  background: #f5f5f5;
 `;
 
 const TemplateItem = styled.div`
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
   cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: ${props => props.isSelected ? '#f0f7ff' : 'transparent'};
-
+  background: ${props => props.isSelected ? '#e3f2fd' : 'white'};
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  
   &:hover {
-    background: ${props => props.isSelected ? '#f0f7ff' : '#f5f5f5'};
+    background: ${props => props.isSelected ? '#e3f2fd' : '#f8f9fa'};
+  }
+
+  h4 {
+    margin: 0 0 5px 0;
+  }
+
+  small {
+    color: #666;
   }
 `;
 
-const DeleteButton = styled.button`
-  padding: 4px 8px;
-  background: #ff4d4f;
-  color: white;
+const ActionButtons = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+`;
+
+const Button = styled.button`
+  padding: 8px 16px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  opacity: 0.8;
+  font-weight: 500;
+  
+  ${props => props.primary && `
+    background: #1a73e8;
+    color: white;
+    &:hover {
+      background: #1557b0;
+    }
+  `}
 
-  &:hover {
-    opacity: 1;
-  }
+  ${props => props.danger && `
+    background: #dc3545;
+    color: white;
+    &:hover {
+      background: #c82333;
+    }
+  `}
 `;
 
-// 添加空状态提示组件
 const EmptyText = styled.div`
   text-align: center;
   padding: 40px 20px;
@@ -69,43 +88,13 @@ const EmptyText = styled.div`
   background: #f9f9f9;
   border-radius: 4px;
   margin: 20px;
-`;
-
-// 添加使用模板按钮样式
-const UseTemplateButton = styled.button`
-  position: sticky;
-  bottom: 20px;
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: #1a73e8;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 200px;
-
-  &:hover {
-    background: #1557b0;
-  }
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 `;
 
 const TemplateList = ({ templates, onSelect }) => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const { deleteTemplate, getTemplates } = useResumeStore();
-
-  const handleDeleteTemplate = async (e, template) => {
-    e.stopPropagation();
-    if (window.confirm('确定要删除此模板吗？')) {
-      await deleteTemplate(template.name);
-      // 强制刷新模板列表
-      window.location.reload();
-    }
-  };
-
-  // 如果没有模板，显示空状态
-  if (!templates || templates.length === 0) {
-    return <EmptyText>暂无保存的模板</EmptyText>;
-  }
+  const { deleteTemplate } = useResumeStore();
 
   const handleTemplateClick = (template) => {
     setSelectedTemplate(template);
@@ -113,30 +102,48 @@ const TemplateList = ({ templates, onSelect }) => {
 
   const handleUseTemplate = () => {
     if (selectedTemplate) {
-      onSelect(selectedTemplate);
+      if (window.confirm('确定要使用此模板吗？这将替换当前的简历内容。')) {
+        onSelect(selectedTemplate);
+      }
     }
   };
 
+  const handleDeleteTemplate = (e, template) => {
+    e.stopPropagation();
+    if (window.confirm('确定要删除此模板吗？此操作不可恢复。')) {
+      deleteTemplate(template.name);
+      if (selectedTemplate?.name === template.name) {
+        setSelectedTemplate(null);
+      }
+      window.location.reload();
+    }
+  };
 
   return (
     <Container>
       <List>
-        {templates.map((template, index) => (
-          <TemplateItem 
-            key={index} 
-            isSelected={selectedTemplate?.name === template.name}
-            onClick={() => handleTemplateClick(template)}
-          >
-            <div>
+        <h3>模板列表</h3>
+        {templates.length === 0 ? (
+          <EmptyText>暂无保存的模板</EmptyText>
+        ) : (
+          templates.map((template, index) => (
+            <TemplateItem 
+              key={index}
+              isSelected={selectedTemplate?.name === template.name}
+              onClick={() => handleTemplateClick(template)}
+            >
               <h4>{template.name}</h4>
               <small>{new Date(template.createTime).toLocaleString()}</small>
-            </div>
-            <DeleteButton onClick={(e) => handleDeleteTemplate(e, template)}>
-              删除
-            </DeleteButton>
-          </TemplateItem>
-        ))}
+              <ActionButtons>
+                <Button danger onClick={(e) => handleDeleteTemplate(e, template)}>
+                  删除
+                </Button>
+              </ActionButtons>
+            </TemplateItem>
+          ))
+        )}
       </List>
+      
       <PreviewContainer>
         {selectedTemplate ? (
           <>
@@ -147,9 +154,9 @@ const TemplateList = ({ templates, onSelect }) => {
               }}
               isPreview={true}
             />
-            <UseTemplateButton onClick={handleUseTemplate}>
+            <Button primary onClick={handleUseTemplate}>
               使用此模板
-            </UseTemplateButton>
+            </Button>
           </>
         ) : (
           <EmptyText>请选择一个模板进行预览</EmptyText>
