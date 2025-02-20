@@ -8,6 +8,7 @@ import { useDroppable } from "@dnd-kit/core";
 import styled from "styled-components";
 import useResumeStore from "../stores/resumeStore";
 import PersonalInfo from "./ResumeComponents/PersonalInfo";
+import AvatarUpload from "./ResumeComponents/AvatarUpload";  // 添加头像组件导入
 import PropTypes from "prop-types";
 
 // 定义预览容器样式
@@ -45,6 +46,7 @@ const ComponentWrapper = styled.div`
 // 定义组件映射表
 const componentMap = {
   personal_info: PersonalInfo,
+  avatar: AvatarUpload,  // 添加头像组件映射
 };
 
 const ResumePreview = ({ isPreview = false, previewData }) => {
@@ -92,15 +94,11 @@ const ResumePreview = ({ isPreview = false, previewData }) => {
     }
   };
 
-  // 根据组件类型渲染对应的组件
-  const renderComponent = (component) => {
-    switch (component.type) {
-      case "personal_info":
-        return <PersonalInfo data={component} />;
-      default:
-        return null;
-    }
-  };
+// 根据组件类型渲染对应的组件
+const renderComponent = (component) => {
+  const Component = componentMap[component.type];
+  return Component ? <Component data={component} /> : null;
+};
 
   // 渲染预览区域
   return (

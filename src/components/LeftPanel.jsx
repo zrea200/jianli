@@ -3,6 +3,8 @@
 import styled from "styled-components";
 // 导入拖拽功能 hook
 import { useDraggable } from "@dnd-kit/core";
+import { componentTypes } from "./ResumeComponents/ResumeComponents";  // 修正导入路径
+
 
 // 定义左侧面板容器样式
 const Panel = styled.div`
@@ -46,16 +48,14 @@ const DraggableItem = ({ id, type, children }) => {
 
 // 左侧面板主组件
 const LeftPanel = () => {
-  // 定义可用的简历组件列表
   const components = [
-    { id: "personal", type: "personal_info", label: "个人信息" },
-
+    { id: "personal", type: componentTypes.PERSONAL_INFO, label: "个人信息" },
+    { id: "avatar", type: componentTypes.AVATAR, label: "头像" },
   ];
 
   return (
     <Panel>
       <h3>简历组件</h3>
-      {/* 遍历渲染所有可拖拽组件 */}
       {components.map((comp) => (
         <DraggableItem key={comp.id} id={comp.id} type={comp.type}>
           {comp.label}

@@ -107,6 +107,16 @@ const useResumeStore = create((set, get) => ({
     const updatedTemplates = templates.filter(t => t.name !== templateName);
     localStorage.setItem('resumeTemplates', JSON.stringify(updatedTemplates));
   },
+  
+  // 更新组件位置
+  updateComponentPosition: (componentId, position) =>
+    set((state) => ({
+      components: state.components.map((comp) =>
+        comp.id === componentId
+          ? { ...comp, position }
+          : comp
+      ),
+    })),
 }));
 
 // === 初始化逻辑 ===
