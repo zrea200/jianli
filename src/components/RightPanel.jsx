@@ -116,17 +116,6 @@ const RightPanel = () => {
       <Button onClick={saveToLocalStorage}>保存数据</Button>
       <Button onClick={() => setShowTemplateModal(true)}>导入模板</Button>
 
-      {/* 样式设置区域 */}
-      <h3>样式设置</h3>
-      <select
-        value={styles.fontSize}
-        onChange={(e) => updateStyles({ fontSize: e.target.value })}
-      >
-        <option value="12px">小号</option>
-        <option value="14px">中号</option>
-        <option value="16px">大号</option>
-      </select>
-
       {/* 保存模板区域 */}
       <h3>保存模板</h3>
       <div>

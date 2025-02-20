@@ -51,7 +51,13 @@ function App() {
           id: componentId,
           type: "avatar",
           data: {
-            imageUrl: ""
+            imageUrl: "",
+            gender: "",
+            age: "",
+            education: "",
+            phone: "",
+            email: "",
+            status: ""
           }
         };
       }

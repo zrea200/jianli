@@ -29,32 +29,12 @@ const ModalContent = styled.div`
   position: relative;      // 相对定位，用于关闭按钮定位
 `;
 
-// 定义关闭按钮样式
-const CloseButton = styled.button`
-  position: absolute;      // 绝对定位
-  top: 10px;              // 距顶部10px
-  right: 10px;            // 距右侧10px
-  background: none;       // 无背景
-  border: none;           // 无边框
-  font-size: 20px;        // 字体大小
-  cursor: pointer;        // 鼠标指针样式
-  padding: 5px;           // 内边距
-  
-  &:hover {
-    color: #666;          // 悬停时改变颜色
-  }
-`;
 
 // 预览模态框组件
 const PreviewModal = ({ onClose, children }) => {
   return (
-    // 点击遮罩层时关闭模态框
     <ModalOverlay onClick={onClose}>
-      {/* 阻止点击内容区域时触发遮罩层的点击事件 */}
       <ModalContent onClick={e => e.stopPropagation()}>
-        {/* 关闭按钮 */}
-        <CloseButton onClick={onClose}>×</CloseButton>
-        {/* 模态框内容 */}
         {children}
       </ModalContent>
     </ModalOverlay>

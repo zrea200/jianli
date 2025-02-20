@@ -48,6 +48,11 @@ const PreviewContainer = styled.div`
   justify-content: center;
   background: #f5f5f5;
   position: relative;
+  
+  // 添加缩放样式
+  transform-origin: center;
+  transform: scale(0.8);
+  transition: transform 0.3s ease;
 `;
 
 const PreviewHeader = styled.div`
@@ -214,7 +219,7 @@ const TemplateList = ({ templates, onSelect }) => {
                 components: selectedTemplate.components,
                 styles: selectedTemplate.styles,
               }}
-              isPreview={true}
+              $isPreview={true}  // 修改这里，添加 $ 前缀
             />
             <PreviewActions>
               <Button $primary onClick={handleUseTemplate}>

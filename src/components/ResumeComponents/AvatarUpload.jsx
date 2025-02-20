@@ -5,10 +5,51 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import ComponentActions from "../ComponentActions";
 
+// 定义基础容器样式
+const Container = styled.div`
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 20px;
+`;
+
+const InfoContainer = styled.div`
+  flex: 1;
+`;
+
+const Field = styled.div`
+  margin-bottom: 10px;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  background: transparent;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #ddd;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #1a73e8;
+    background: white;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+  }
+`;
+
+const InfoGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+`;
+
 const AvatarWrapper = styled.div`
-  position: absolute;
-  top: 20px;
-  right: 40px;
   width: 120px;
   height: 150px;
   display: flex;
@@ -26,20 +67,25 @@ const AvatarContainer = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 2px dashed #ddd;
+  border: 1px solid transparent;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
 
   &:hover {
+    border-color: #ddd;
+  }
+
+  &:focus {
     border-color: #1a73e8;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
   }
 `;
 
 const UploadText = styled.div`
-  margin-top: 8px;
-  font-size: 12px;
+  font-size: 14px;
   color: #666;
-  text-align: center;
+  margin-top: 8px;
 `;
 
 const HiddenInput = styled.input`
@@ -70,22 +116,50 @@ const AvatarUpload = ({ data, $isPreview }) => {
       reader.onload = (e) => {
         updateComponent({
           ...data,
-          imageUrl: e.target.result
+          data: {
+            ...data.data,
+            imageUrl: e.target.result
+          }
         });
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const handleChange = (field, value) => {
+    updateComponent({
+      ...data,
+      data: {
+        ...data.data,
+        [field]: value
+      }
+    });
+  };
+
   if ($isPreview) {
-    return data.imageUrl ? (
-      <AvatarWrapper>
-        <AvatarContainer>
-          <img src={data.imageUrl} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        </AvatarContainer>
-        <UploadText>上传照片</UploadText>
-      </AvatarWrapper>
-    ) : null;
+    return (
+      <Container>
+        <AvatarWrapper>
+          {data.data?.imageUrl ? (
+            <AvatarContainer>
+              <img src={data.data.imageUrl} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </AvatarContainer>
+          ) : null}
+        </AvatarWrapper>
+        <InfoContainer>
+          <InfoGrid>
+            <Input value={data.data?.gender || ""} readOnly />
+            <Input value={data.data?.age || ""} readOnly />
+            <Input value={data.data?.education || ""} readOnly />
+            <Input value={data.data?.phone || ""} readOnly />
+            <Input value={data.data?.email || ""} readOnly />
+          </InfoGrid>
+          <Field>
+            <Input value={data.data?.status || ""} readOnly />
+          </Field>
+        </InfoContainer>
+      </Container>
+    );
   }
 
   return (
@@ -94,21 +168,59 @@ const AvatarUpload = ({ data, $isPreview }) => {
         onDelete={() => removeComponent(data.id)}
         dragHandleProps={{ ...attributes, ...listeners }}
       >
-        <AvatarWrapper>
-          <AvatarContainer onClick={() => inputRef.current?.click()}>
-            {data.imageUrl ? (
-              <img src={data.imageUrl} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            ) : (
-              <UploadText>点击上传照片</UploadText>
-            )}
-          </AvatarContainer>
-          <HiddenInput
-            ref={inputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleUpload}
-          />
-        </AvatarWrapper>
+        <Container>
+          <AvatarWrapper>
+            <AvatarContainer onClick={() => inputRef.current?.click()}>
+              {data.data?.imageUrl ? (
+                <img src={data.data.imageUrl} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <UploadText>点击上传照片</UploadText>
+              )}
+            </AvatarContainer>
+            <HiddenInput
+              ref={inputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleUpload}
+            />
+          </AvatarWrapper>
+          <InfoContainer>
+            <InfoGrid>
+              <Input 
+                placeholder="性别"
+                value={data.data?.gender || ""}
+                onChange={(e) => handleChange("gender", e.target.value)}
+              />
+              <Input 
+                placeholder="年龄"
+                value={data.data?.age || ""}
+                onChange={(e) => handleChange("age", e.target.value)}
+              />
+              <Input 
+                placeholder="学历"
+                value={data.data?.education || ""}
+                onChange={(e) => handleChange("education", e.target.value)}
+              />
+              <Input 
+                placeholder="电话"
+                value={data.data?.phone || ""}
+                onChange={(e) => handleChange("phone", e.target.value)}
+              />
+              <Input 
+                placeholder="邮箱"
+                value={data.data?.email || ""}
+                onChange={(e) => handleChange("email", e.target.value)}
+              />
+            </InfoGrid>
+            <Field>
+              <Input 
+                placeholder="求职状态"
+                value={data.data?.status || ""}
+                onChange={(e) => handleChange("status", e.target.value)}
+              />
+            </Field>
+          </InfoContainer>
+        </Container>
       </ComponentActions>
     </div>
   );
