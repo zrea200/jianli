@@ -29,20 +29,36 @@ function App() {
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (over && over.id === "resume-drop-area") {
-      const componentId = `personal_info-${Date.now()}`;
-      const newComponent = {
-        id: componentId,
-        type: "personal_info",
-        data: {
-          name: "",
-          phone: "",
-          email: "",
-          address: "",
-          description: ""
-        }
-      };
+      // 这里需要根据拖拽的组件类型创建不同的组件
+      const componentType = active.data.current.type;
+      const componentId = `${componentType}-${Date.now()}`;
+      
+      let newComponent;
+      if (componentType === "personal_info") {
+        newComponent = {
+          id: componentId,
+          type: "personal_info",
+          data: {
+            name: "",
+            phone: "",
+            email: "",
+            address: "",
+            description: ""
+          }
+        };
+      } else if (componentType === "avatar") {
+        newComponent = {
+          id: componentId,
+          type: "avatar",
+          data: {
+            imageUrl: ""
+          }
+        };
+      }
 
-      addComponent(newComponent);
+      if (newComponent) {
+        addComponent(newComponent);
+      }
     }
   };
 

@@ -1,11 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
 import useResumeStore from '../../stores/resumeStore';
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import ComponentActions from "../ComponentActions";
 
 const AvatarWrapper = styled.div`
-  position: relative;
+  position: absolute;
+  top: 20px;
+  right: 40px;
   width: 120px;
-  margin: 20px auto;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const AvatarContainer = styled.div`
@@ -20,54 +28,18 @@ const AvatarContainer = styled.div`
   cursor: pointer;
   border: 2px dashed #ddd;
   position: relative;
+  overflow: hidden;
 
   &:hover {
     border-color: #1a73e8;
   }
 `;
 
-const AvatarImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 4px;
-`;
-
-const UploadIcon = styled.div`
-  font-size: 24px;
-  color: #999;
-  margin-bottom: 8px;
-`;
-
 const UploadText = styled.div`
+  margin-top: 8px;
   font-size: 12px;
   color: #666;
-`;
-
-const DeleteButton = styled.button`
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #ff4d4f;
-  border: none;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s;
-
-  ${AvatarWrapper}:hover & {
-    opacity: 1;
-  }
-
-  &:hover {
-    background: #ff7875;
-  }
+  text-align: center;
 `;
 
 const HiddenInput = styled.input`
@@ -77,6 +49,19 @@ const HiddenInput = styled.input`
 const AvatarUpload = ({ data, $isPreview }) => {
   const { updateComponent, removeComponent } = useResumeStore();
   const inputRef = React.useRef(null);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: data.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
   const handleUpload = (event) => {
     const file = event.target.files[0];
@@ -92,40 +77,40 @@ const AvatarUpload = ({ data, $isPreview }) => {
     }
   };
 
-  const handleDelete = () => {
-    removeComponent(data.id);
-  };
-
   if ($isPreview) {
     return data.imageUrl ? (
       <AvatarWrapper>
         <AvatarContainer>
-          <AvatarImage src={data.imageUrl} alt="头像" />
+          <img src={data.imageUrl} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </AvatarContainer>
+        <UploadText>上传照片</UploadText>
       </AvatarWrapper>
     ) : null;
   }
 
   return (
-    <AvatarWrapper>
-      <AvatarContainer onClick={() => inputRef.current?.click()}>
-        {data.imageUrl ? (
-          <AvatarImage src={data.imageUrl} alt="头像" />
-        ) : (
-          <>
-            <UploadIcon>+</UploadIcon>
-            <UploadText>上传照片</UploadText>
-          </>
-        )}
-      </AvatarContainer>
-      <DeleteButton onClick={handleDelete}>×</DeleteButton>
-      <HiddenInput
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleUpload}
-      />
-    </AvatarWrapper>
+    <div ref={setNodeRef} style={style}>
+      <ComponentActions
+        onDelete={() => removeComponent(data.id)}
+        dragHandleProps={{ ...attributes, ...listeners }}
+      >
+        <AvatarWrapper>
+          <AvatarContainer onClick={() => inputRef.current?.click()}>
+            {data.imageUrl ? (
+              <img src={data.imageUrl} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <UploadText>点击上传照片</UploadText>
+            )}
+          </AvatarContainer>
+          <HiddenInput
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleUpload}
+          />
+        </AvatarWrapper>
+      </ComponentActions>
+    </div>
   );
 };
 

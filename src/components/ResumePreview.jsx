@@ -49,23 +49,23 @@ const componentMap = {
   avatar: AvatarUpload,  // 添加头像组件映射
 };
 
-const ResumePreview = ({ isPreview = false, previewData }) => {
-  const { components: storeComponents, styles: storeStyles } = useResumeStore();
+const ResumePreview = ({ $isPreview = false, previewData }) => {
+  const { components: storeComponents, styles: storeStyles, updateComponentOrder } = useResumeStore();
   const { components = storeComponents, styles = storeStyles } = previewData || {};
 
   // 如果是预览模式，渲染简化版本
-  if (isPreview) {
+  if ($isPreview) {
     return (
       <PreviewContainer 
         className="resume-preview"
         style={{ fontSize: styles.fontSize }}
-        $isPreview={isPreview}  
+        $isPreview={$isPreview}  
       >
         {components?.map((component) => {
           const Component = componentMap[component.type];
           return Component ? (
             <ComponentWrapper key={component.id}>
-              <Component data={component} $isPreview={isPreview} />  
+              <Component data={component} $isPreview={$isPreview} />  
             </ComponentWrapper>
           ) : null;
         })}
@@ -94,11 +94,17 @@ const ResumePreview = ({ isPreview = false, previewData }) => {
     }
   };
 
-// 根据组件类型渲染对应的组件
-const renderComponent = (component) => {
-  const Component = componentMap[component.type];
-  return Component ? <Component data={component} /> : null;
-};
+  // 根据组件类型渲染对应的组件
+  const renderComponent = (component) => {
+    const Component = componentMap[component.type];
+    return Component ? (
+      <Component 
+        key={component.id}
+        data={component}
+        $isPreview={$isPreview}
+      />
+    ) : null;
+  };
 
   // 渲染预览区域
   return (
@@ -108,7 +114,7 @@ const renderComponent = (component) => {
       <SortableContext items={components.map(c => c.id)} strategy={verticalListSortingStrategy}>
         {/* 预览容器 */}
         <PreviewContainer 
-          ref={!isPreview ? setNodeRef : undefined} 
+          ref={!$isPreview ? setNodeRef : undefined} 
           className="resume-preview"
         >
           {/* 渲染所有简历组件 */}
@@ -125,7 +131,7 @@ const renderComponent = (component) => {
 
 // 属性类型检查
 ResumePreview.propTypes = {
-  isPreview: PropTypes.bool
+  $isPreview: PropTypes.bool
 };
 
 export default ResumePreview;
