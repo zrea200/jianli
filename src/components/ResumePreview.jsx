@@ -22,9 +22,10 @@ const PreviewContainer = styled.div`
   position: relative;
   
   // 在预览模式下的特殊样式
-  ${props => props.isPreview && `
-    transform: scale(0.9);
-    transform-origin: top center;
+  ${props => props.$isPreview && `
+    transform: scale(0.68);
+    transform-origin: center center;
+    margin: 20px auto;
   `}
 `;
 
@@ -56,13 +57,13 @@ const ResumePreview = ({ isPreview = false, previewData }) => {
       <PreviewContainer 
         className="resume-preview"
         style={{ fontSize: styles.fontSize }}
-        isPreview={true}
+        $isPreview={isPreview}  
       >
         {components?.map((component) => {
           const Component = componentMap[component.type];
           return Component ? (
             <ComponentWrapper key={component.id}>
-              <Component data={component} isPreview={true} />
+              <Component data={component} $isPreview={isPreview} />  
             </ComponentWrapper>
           ) : null;
         })}

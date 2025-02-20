@@ -81,57 +81,59 @@ const TextArea = styled.textarea`
 `;
 
 // 个人信息组件定义
-const PersonalInfo = ({ data, isPreview }) => {
+const PersonalInfo = ({ data, $isPreview }) => {
   const { removeComponent, updateComponent } = useResumeStore();
 
-  // 如果是预览模式，渲染只读版本
-  if (isPreview) {
+  // 如果是预览模式，渲染只读版本，不显示操作图标
+  if ($isPreview) {
     return (
-      <Container>
-        <Field>
-          <Input
-            type="text"
-            value={data.data?.name || ""}
-            readOnly
-            style={{ pointerEvents: 'none' }}
-          />
-        </Field>
-        
-        <Grid>
-          <Field>
-            <Input
-              type="tel"
-              value={data.data?.phone || ""}
-              readOnly
-              style={{ pointerEvents: 'none' }}
-            />
-          </Field>
-          <Field>
-            <Input
-              type="email"
-              value={data.data?.email || ""}
-              readOnly
-              style={{ pointerEvents: 'none' }}
-            />
-          </Field>
+      <div>  {/* 移除 ComponentActions 包装 */}
+        <Container>
           <Field>
             <Input
               type="text"
-              value={data.data?.address || ""}
+              value={data.data?.name || ""}
               readOnly
               style={{ pointerEvents: 'none' }}
             />
           </Field>
-        </Grid>
-        
-        <Field>
-          <TextArea
-            value={data.data?.description || ""}
-            readOnly
-            style={{ pointerEvents: 'none' }}
-          />
-        </Field>
-      </Container>
+          
+          <Grid>
+            <Field>
+              <Input
+                type="tel"
+                value={data.data?.phone || ""}
+                readOnly
+                style={{ pointerEvents: 'none' }}
+              />
+            </Field>
+            <Field>
+              <Input
+                type="email"
+                value={data.data?.email || ""}
+                readOnly
+                style={{ pointerEvents: 'none' }}
+              />
+            </Field>
+            <Field>
+              <Input
+                type="text"
+                value={data.data?.address || ""}
+                readOnly
+                style={{ pointerEvents: 'none' }}
+              />
+            </Field>
+          </Grid>
+          
+          <Field>
+            <TextArea
+              value={data.data?.description || ""}
+              readOnly
+              style={{ pointerEvents: 'none' }}
+            />
+          </Field>
+        </Container>
+      </div>
     );
   }
 
