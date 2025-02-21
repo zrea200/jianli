@@ -14,55 +14,37 @@ import TextEditor from "../TextEditor/TextEditor";
 const PersonalInfo = ({ data, $isPreview }) => {
   const { removeComponent, updateComponent } = useResumeStore();
   const [activeField, setActiveField] = useState(null);
-  const [description, setDescription] = useState(data.data?.description || '');
+  const [fields, setFields] = useState({
+    name: data.data?.name || '',
+    phone: data.data?.phone || '',
+    email: data.data?.email || '',
+    address: data.data?.address || '',
+    description: data.data?.description || ''
+  });
 
-  // 如果是预览模式，渲染只读版本，不显示操作图标
+  // 如果是预览模式，渲染只读版本
   if ($isPreview) {
     return (
       <div>
         <Container>
           <Field>
-            <Input
-              type="text"
-              value={data.data?.name || ""}
-              readOnly
-              style={{ pointerEvents: "none" }}
-            />
+            <div dangerouslySetInnerHTML={{ __html: fields.name }} />
           </Field>
 
           <Grid>
             <Field>
-              <Input
-                type="tel"
-                value={data.data?.phone || ""}
-                readOnly
-                style={{ pointerEvents: "none" }}
-              />
+              <div dangerouslySetInnerHTML={{ __html: fields.phone }} />
             </Field>
             <Field>
-              <Input
-                type="email"
-                value={data.data?.email || ""}
-                readOnly
-                style={{ pointerEvents: "none" }}
-              />
+              <div dangerouslySetInnerHTML={{ __html: fields.email }} />
             </Field>
             <Field>
-              <Input
-                type="text"
-                value={data.data?.address || ""}
-                readOnly
-                style={{ pointerEvents: "none" }}
-              />
+              <div dangerouslySetInnerHTML={{ __html: fields.address }} />
             </Field>
           </Grid>
 
           <Field>
-            <TextArea
-              value={data.data?.description || ""}
-              readOnly
-              style={{ pointerEvents: "none" }}
-            />
+            <div dangerouslySetInnerHTML={{ __html: fields.description }} />
           </Field>
         </Container>
       </div>
@@ -92,13 +74,11 @@ const PersonalInfo = ({ data, $isPreview }) => {
 
   // 处理表单字段变化的方法
   const handleChange = (field, value) => {
-    // 数据验证
-    if (!data || !data.id) {
-      console.error("PersonalInfo - Invalid data structure:", data);
-      return;
-    }
+    setFields(prev => ({
+      ...prev,
+      [field]: value
+    }));
 
-    // 构建更新数据结构
     const updatedData = {
       id: data.id,
       type: data.type || "personal_info",
@@ -108,18 +88,9 @@ const PersonalInfo = ({ data, $isPreview }) => {
       },
     };
 
-    // 更新数据
     updateComponent(updatedData);
   };
 
-  // 渲染组件
-  // 添加处理方法
-  const handleFormat = (field, formatType) => {
-    console.log(`Applying ${formatType} to ${field}`);
-    // 这里实现格式化逻辑
-  };
-
-  // 在渲染部分修改
   return (
     <div ref={setNodeRef} style={style}>
       <ComponentActions
@@ -127,67 +98,43 @@ const PersonalInfo = ({ data, $isPreview }) => {
         dragHandleProps={{ ...attributes, ...listeners }}
       >
         <Container>
-            {/* 姓名输入字段 */}
+          <Field>
+            <EditorLabel></EditorLabel>
+            <TextEditor
+              value={fields.name}
+              onChange={(content) => handleChange("name", content)}
+            />
+          </Field>
+
+          <Grid>
             <Field>
-              <Input
-                id="name-input"
-                type="text"
-                value={data.data?.name || ""}
-                onChange={(e) => handleChange("name", e.target.value)}
-                onFocus={() => setActiveField("name")}
-                onBlur={() => setTimeout(() => setActiveField(null), 200)}
-                placeholder="姓名"
+              <EditorLabel></EditorLabel>
+              <TextEditor
+                value={fields.phone}
+                onChange={(content) => handleChange("phone", content)}
               />
             </Field>
-
-            {/* 联系信息网格布局 */}
-            <Grid>
-              {/* 电话输入字段 */}
-              <Field>
-                <Input
-                  id="phone-input"
-                  type="tel"
-                  value={data.data?.phone || ""}
-                  onChange={(e) => handleChange("phone", e.target.value)}
-                  onFocus={() => setActiveField("phone")}
-                  onBlur={() => setTimeout(() => setActiveField(null), 200)}
-                  placeholder="电话"
-                />
-              </Field>
-              {/* 邮箱输入字段 */}
-              <Field>
-                <Input
-                  id="email-input"
-                  type="email"
-                  value={data.data?.email || ""}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                  onFocus={() => setActiveField("email")}
-                  onBlur={() => setTimeout(() => setActiveField(null), 200)}
-                  placeholder="邮箱"
-                />
-              </Field>
-              {/* 地址输入字段 */}
-              <Field>
-                <Input
-                  id="address-input"
-                  type="text"
-                  value={data.data?.address || ""}
-                  onChange={(e) => handleChange("address", e.target.value)}
-                  onFocus={() => setActiveField("address")}
-                  onBlur={() => setTimeout(() => setActiveField(null), 200)}
-                  placeholder="地址"
-                />
-              </Field>
-            </Grid>
-
-            {/* 个人简介文本域 */}
             <Field>
+              <EditorLabel></EditorLabel>
+              <TextEditor
+                value={fields.email}
+                onChange={(content) => handleChange("email", content)}
+              />
+            </Field>
+            <Field>
+              <EditorLabel></EditorLabel>
+              <TextEditor
+                value={fields.address}
+                onChange={(content) => handleChange("address", content)}
+              />
+            </Field>
+          </Grid>
+
+          <Field>
+            <EditorLabel></EditorLabel>
             <TextEditor
-              value={description}
-              onChange={(content) => {
-                setDescription(content);
-                handleChange("description", content);
-              }}
+              value={fields.description}
+              onChange={(content) => handleChange("description", content)}
             />
           </Field>
         </Container>
@@ -213,74 +160,64 @@ PersonalInfo.propTypes = {
 // 定义基础容器样式
 const Container = styled.div`
   padding: 20px;
-  position: relative; // 确保有相对定位
+  position: relative;
   margin-top: 40px; // 为工具栏预留空间
 `;
 
 // 定义三列网格布局
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr); // 平均分配三列
-  gap: 15px; // 设置列间距
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 15px 0;
 `;
 
 // 定义表单字段容器样式
 const Field = styled.div`
-  margin-bottom: 10px;
-  position: relative; // 保持相对定位
-`;
+  margin-bottom: 15px;
+  position: relative;
 
-// 定义输入框基础样式
-const Input = styled.input`
-  width: 100%;
-  padding: 8px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  font-size: 14px;
-  background: transparent;
-  transition: all 0.3s ease;
-
-  // 悬停和聚焦状态的样式
-  &:hover {
-    border-color: #ddd;
+  .quill {
+    background: transparent;
   }
 
-  &:focus {
+  .ql-container {
+    border: 1px solid transparent !important;
+    border-radius: 4px;
+    font-size: 14px;
+    background: transparent;
+    transition: all 0.3s ease;
+  }
+
+  &:hover .ql-container {
+    border-color: #ddd !important;
+  }
+
+  .ql-editor {
+    padding: 8px;
+    min-height: 30px;
+  }
+
+  .ql-editor.ql-blank::before {
+    font-style: normal;
+    left: 8px;
+    color: #666;
+  }
+
+  &:focus-within .ql-container {
     outline: none;
-    border-color: #1a73e8;
+    border-color: #1a73e8 !important;
     background: white;
     box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
   }
 `;
 
-// 定义文本域样式，继承输入框的基础样式
-const TextArea = styled.textarea`
-  // 继承 Input 的基础样式
-  width: 100%;
-  padding: 8px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  font-size: 14px;
-  background: transparent;
-  transition: all 0.3s ease;
-
-  // 文本域特有的样式
-  resize: none; // 禁止手动调整大小
-  overflow: hidden; // 隐藏滚动条
-  min-height: 40px;
-  height: auto;
-
-  // 悬停和聚焦状态
-  &:hover {
-    border-color: #ddd;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #1a73e8;
-    background: white;
-    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
-  }
+const EditorLabel = styled.div`
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
 `;
+
+// 删除不再需要的 Input 和 TextArea 样式组件，因为现在使用 TextEditor 替代
 
 export default PersonalInfo;
