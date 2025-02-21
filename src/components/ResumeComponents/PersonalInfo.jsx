@@ -10,9 +10,11 @@ import useResumeStore from "../../stores/resumeStore";
 import ComponentActions from "../ComponentActions";
 import TextEditor from "../TextEditor/TextEditor";
 
+// 删除重复的组件声明，只保留一个
 const PersonalInfo = ({ data, $isPreview }) => {
   const { removeComponent, updateComponent } = useResumeStore();
   const [activeField, setActiveField] = useState(null);
+  const [description, setDescription] = useState(data.data?.description || '');
 
   // 如果是预览模式，渲染只读版本，不显示操作图标
   if ($isPreview) {
@@ -124,8 +126,7 @@ const PersonalInfo = ({ data, $isPreview }) => {
         onDelete={() => removeComponent(data.id)}
         dragHandleProps={{ ...attributes, ...listeners }}
       >
-        <TextEditor onFormat={(type) => handleFormat(activeField, type)}>
-          <Container>
+        <Container>
             {/* 姓名输入字段 */}
             <Field>
               <Input
@@ -181,25 +182,19 @@ const PersonalInfo = ({ data, $isPreview }) => {
 
             {/* 个人简介文本域 */}
             <Field>
-              <TextArea
-                value={data.data?.description || ""}
-                onChange={(e) => {
-                  handleChange("description", e.target.value);
-                  autoResize(e);
-                }}
-                onInput={autoResize}
-                onFocus={() => setActiveField("description")}
-                onBlur={() => setTimeout(() => setActiveField(null), 200)}
-                placeholder="个人简介"
-              />
-            </Field>
-          </Container>
-        </TextEditor>
+            <TextEditor
+              value={description}
+              onChange={(content) => {
+                setDescription(content);
+                handleChange("description", content);
+              }}
+            />
+          </Field>
+        </Container>
       </ComponentActions>
     </div>
   );
 };
-
 // 组件属性类型检查
 PersonalInfo.propTypes = {
   data: PropTypes.shape({
