@@ -2,19 +2,20 @@ import styled from 'styled-components';
 
 const ToolbarContainer = styled.div`
   position: absolute;
-  top: -36px;
+  top: -40px;
   left: 0;
+  right: 0;
   background: white;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  /* display: ${props => props.$isVisible ? 'flex' : 'none'}; */
   display: flex;
   padding: 4px;
   gap: 4px;
-  z-index: 100;
+  z-index: 1000;
   border: 1px solid #eee;
+  width: fit-content;
+  margin: 0 auto;
 `;
-
 const ButtonGroup = styled.div`
   display: flex;
   gap: 2px;

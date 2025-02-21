@@ -2,13 +2,13 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 // 导入样式和类型检查相关的依赖
-import styled from "styled-components";
 import PropTypes from "prop-types";
+import styled from "styled-components";
 // 导入自定义组件和状态管理
-import ComponentActions from "../ComponentActions";
-import useResumeStore from "../../stores/resumeStore";
-import TextEditor from "../TextEditor/TextEditor";
 import { useState } from "react";
+import useResumeStore from "../../stores/resumeStore";
+import ComponentActions from "../ComponentActions";
+import TextEditor from "../TextEditor/TextEditor";
 
 const PersonalInfo = ({ data, $isPreview }) => {
   const { removeComponent, updateComponent } = useResumeStore();
@@ -18,8 +18,6 @@ const PersonalInfo = ({ data, $isPreview }) => {
   if ($isPreview) {
     return (
       <div>
-        {" "}
-        {/* 移除 ComponentActions 包装 */}
         <Container>
           <Field>
             <Input
@@ -126,29 +124,27 @@ const PersonalInfo = ({ data, $isPreview }) => {
         onDelete={() => removeComponent(data.id)}
         dragHandleProps={{ ...attributes, ...listeners }}
       >
-        <Container>
-          {/* 姓名输入字段 */}
-          <Field>
-            <TextEditor onFormat={(type) => handleFormat("name", type)}>
+        <TextEditor onFormat={(type) => handleFormat(activeField, type)}>
+          <Container>
+            {/* 姓名输入字段 */}
+            <Field>
               <Input
-                id="name - input" // 添加 id 属性
-                name="name - input" // 添加 name 属性
+                id="name-input"
                 type="text"
                 value={data.data?.name || ""}
                 onChange={(e) => handleChange("name", e.target.value)}
+                onFocus={() => setActiveField("name")}
+                onBlur={() => setTimeout(() => setActiveField(null), 200)}
                 placeholder="姓名"
               />
-            </TextEditor>
-          </Field>
+            </Field>
 
-          {/* 联系信息网格布局 */}
-          <Grid>
-            {/* 电话输入字段 */}
-            <Field>
-              <TextEditor onFormat={(type) => handleFormat("phone", type)}>
+            {/* 联系信息网格布局 */}
+            <Grid>
+              {/* 电话输入字段 */}
+              <Field>
                 <Input
-                  id="phone - input" // 修改为唯一的id
-                  name="phone - input" // 修改为唯一的name
+                  id="phone-input"
                   type="tel"
                   value={data.data?.phone || ""}
                   onChange={(e) => handleChange("phone", e.target.value)}
@@ -156,14 +152,11 @@ const PersonalInfo = ({ data, $isPreview }) => {
                   onBlur={() => setTimeout(() => setActiveField(null), 200)}
                   placeholder="电话"
                 />
-              </TextEditor>
-            </Field>
-            {/* 邮箱输入字段 */}
-            <Field>
-              <TextEditor onFormat={(type) => handleFormat("email", type)}>
+              </Field>
+              {/* 邮箱输入字段 */}
+              <Field>
                 <Input
-                  id="email - input" // 修改为唯一的id
-                  name="email - input" // 修改为唯一的name
+                  id="email-input"
                   type="email"
                   value={data.data?.email || ""}
                   onChange={(e) => handleChange("email", e.target.value)}
@@ -171,14 +164,11 @@ const PersonalInfo = ({ data, $isPreview }) => {
                   onBlur={() => setTimeout(() => setActiveField(null), 200)}
                   placeholder="邮箱"
                 />
-              </TextEditor>
-            </Field>
-            {/* 地址输入字段 */}
-            <Field>
-              <TextEditor onFormat={(type) => handleFormat("address", type)}>
+              </Field>
+              {/* 地址输入字段 */}
+              <Field>
                 <Input
-                  id="address - input" // 修改为唯一的id
-                  name="address - input" // 修改为唯一的name
+                  id="address-input"
                   type="text"
                   value={data.data?.address || ""}
                   onChange={(e) => handleChange("address", e.target.value)}
@@ -186,13 +176,11 @@ const PersonalInfo = ({ data, $isPreview }) => {
                   onBlur={() => setTimeout(() => setActiveField(null), 200)}
                   placeholder="地址"
                 />
-              </TextEditor>
-            </Field>
-          </Grid>
+              </Field>
+            </Grid>
 
-          {/* 个人简介文本域 */}
-          <Field>
-            <TextEditor onFormat={(type) => handleFormat("description", type)}>
+            {/* 个人简介文本域 */}
+            <Field>
               <TextArea
                 value={data.data?.description || ""}
                 onChange={(e) => {
@@ -204,9 +192,9 @@ const PersonalInfo = ({ data, $isPreview }) => {
                 onBlur={() => setTimeout(() => setActiveField(null), 200)}
                 placeholder="个人简介"
               />
-            </TextEditor>
-          </Field>
-        </Container>
+            </Field>
+          </Container>
+        </TextEditor>
       </ComponentActions>
     </div>
   );
@@ -230,6 +218,8 @@ PersonalInfo.propTypes = {
 // 定义基础容器样式
 const Container = styled.div`
   padding: 20px;
+  position: relative; // 确保有相对定位
+  margin-top: 40px; // 为工具栏预留空间
 `;
 
 // 定义三列网格布局
@@ -242,7 +232,7 @@ const Grid = styled.div`
 // 定义表单字段容器样式
 const Field = styled.div`
   margin-bottom: 10px;
-  position: relative;
+  position: relative; // 保持相对定位
 `;
 
 // 定义输入框基础样式
