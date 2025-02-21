@@ -57,7 +57,8 @@ function App() {
             education: "",
             phone: "",
             email: "",
-            status: ""
+            status: "",
+            imagePosition: "left" // 添加默认位置
           }
         };
       }
