@@ -10,10 +10,8 @@ import useResumeStore from "../../stores/resumeStore";
 import ComponentActions from "../ComponentActions";
 import TextEditor from "../TextEditor/TextEditor";
 
-// 删除重复的组件声明，只保留一个
 const PersonalInfo = ({ data, $isPreview }) => {
   const { removeComponent, updateComponent } = useResumeStore();
-  const [activeField, setActiveField] = useState(null);
   const [fields, setFields] = useState({
     name: data.data?.name || '',
     phone: data.data?.phone || '',

@@ -5,6 +5,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import ComponentActions from "../ComponentActions";
 import { useState } from 'react';
+import TextEditor from "../TextEditor/TextEditor";
 
 // 定义基础容器样式
 const Container = styled.div`
@@ -20,25 +21,39 @@ const InfoContainer = styled.div`
 `;
 
 const Field = styled.div`
-  margin-bottom: 10px;
-`;
+  margin-bottom: 15px;
+  position: relative;
 
-const Input = styled.input`
-  width: 100%;
-  padding: 8px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  font-size: 14px;
-  background: transparent;
-  transition: all 0.3s ease;
-
-  &:hover {
-    border-color: #ddd;
+  .quill {
+    background: transparent;
   }
 
-  &:focus {
+  .ql-container {
+    border: 1px solid transparent !important;
+    border-radius: 4px;
+    font-size: 14px;
+    background: transparent;
+    transition: all 0.3s ease;
+  }
+
+  &:hover .ql-container {
+    border-color: #ddd !important;
+  }
+
+  .ql-editor {
+    padding: 8px;
+    min-height: 30px;
+  }
+
+  .ql-editor.ql-blank::before {
+    font-style: normal;
+    left: 8px;
+    color: #666;
+  }
+
+  &:focus-within .ql-container {
     outline: none;
-    border-color: #1a73e8;
+    border-color: #1a73e8 !important;
     background: white;
     box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
   }
@@ -94,7 +109,6 @@ const HiddenInput = styled.input`
   display: none;
 `;
 
-// 添加位置切换按钮的样式
 const PositionButton = styled.button`
   padding: 6px;
   background: #f5f5f5;
@@ -122,18 +136,43 @@ const PositionButton = styled.button`
 const AvatarUpload = ({ data, $isPreview }) => {
   const { updateComponent, removeComponent } = useResumeStore();
   const inputRef = React.useRef(null);
-  const [isActive, setIsActive] = useState(false);  // 添加状态来跟踪组件是否被选中
+  const [isActive, setIsActive] = useState(false);
 
-  // 切换头像位置的处理函数
-  const togglePosition = () => {
-    updateComponent({
-      ...data,
-      data: {
-        ...data.data,
-        imagePosition: data.data?.imagePosition === 'right' ? 'left' : 'right'
-      }
-    });
-  };
+  if ($isPreview) {
+    return (
+      <Container $imagePosition={data.data?.imagePosition}>
+        <AvatarWrapper>
+          {data.data?.imageUrl ? (
+            <AvatarContainer>
+              <img src={data.data.imageUrl} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </AvatarContainer>
+          ) : null}
+        </AvatarWrapper>
+        <InfoContainer>
+          <InfoGrid>
+            <Field>
+              <div dangerouslySetInnerHTML={{ __html: data.data?.gender || "" }} />
+            </Field>
+            <Field>
+              <div dangerouslySetInnerHTML={{ __html: data.data?.age || "" }} />
+            </Field>
+            <Field>
+              <div dangerouslySetInnerHTML={{ __html: data.data?.education || "" }} />
+            </Field>
+            <Field>
+              <div dangerouslySetInnerHTML={{ __html: data.data?.phone || "" }} />
+            </Field>
+            <Field>
+              <div dangerouslySetInnerHTML={{ __html: data.data?.email || "" }} />
+            </Field>
+          </InfoGrid>
+          <Field>
+            <div dangerouslySetInnerHTML={{ __html: data.data?.status || "" }} />
+          </Field>
+        </InfoContainer>
+      </Container>
+    );
+  }
 
   const {
     attributes,
@@ -175,47 +214,22 @@ const AvatarUpload = ({ data, $isPreview }) => {
     });
   };
 
-  if ($isPreview) {
-    return (
-      <Container $imagePosition={data.data?.imagePosition}>
-        <AvatarWrapper>
-          {data.data?.imageUrl ? (
-            <AvatarContainer>
-              <img src={data.data.imageUrl} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </AvatarContainer>
-          ) : null}
-        </AvatarWrapper>
-        <InfoContainer>
-          <InfoGrid>
-            <Input value={data.data?.gender || ""} readOnly />
-            <Input value={data.data?.age || ""} readOnly />
-            <Input value={data.data?.education || ""} readOnly />
-            <Input value={data.data?.phone || ""} readOnly />
-            <Input value={data.data?.email || ""} readOnly />
-          </InfoGrid>
-          <Field>
-            <Input value={data.data?.status || ""} readOnly />
-          </Field>
-        </InfoContainer>
-      </Container>
-    );
-  }
-
-  // 添加鼠标事件处理函数
-  const handleMouseEnter = () => {
-    setIsActive(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsActive(false);
+  const togglePosition = () => {
+    updateComponent({
+      ...data,
+      data: {
+        ...data.data,
+        imagePosition: data.data?.imagePosition === 'right' ? 'left' : 'right'
+      }
+    });
   };
 
   return (
     <div 
       ref={setNodeRef} 
       style={style}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => setIsActive(true)}
+      onMouseLeave={() => setIsActive(false)}
     >
       <ComponentActions
         onDelete={() => removeComponent(data.id)}
@@ -236,7 +250,7 @@ const AvatarUpload = ({ data, $isPreview }) => {
               accept="image/*"
               onChange={handleUpload}
             />
-            {isActive && (  // 只在组件被选中时显示箭头按钮
+            {isActive && (
               <PositionButton 
                 onClick={togglePosition} 
                 title={data.data?.imagePosition === 'right' ? '切换到左侧' : '切换到右侧'}
@@ -255,37 +269,41 @@ const AvatarUpload = ({ data, $isPreview }) => {
           </AvatarWrapper>
           <InfoContainer>
             <InfoGrid>
-              <Input 
-                placeholder="性别"
-                value={data.data?.gender || ""}
-                onChange={(e) => handleChange("gender", e.target.value)}
-              />
-              <Input 
-                placeholder="年龄"
-                value={data.data?.age || ""}
-                onChange={(e) => handleChange("age", e.target.value)}
-              />
-              <Input 
-                placeholder="学历"
-                value={data.data?.education || ""}
-                onChange={(e) => handleChange("education", e.target.value)}
-              />
-              <Input 
-                placeholder="电话"
-                value={data.data?.phone || ""}
-                onChange={(e) => handleChange("phone", e.target.value)}
-              />
-              <Input 
-                placeholder="邮箱"
-                value={data.data?.email || ""}
-                onChange={(e) => handleChange("email", e.target.value)}
-              />
+              <Field>
+                <TextEditor
+                  value={data.data?.gender || ""}
+                  onChange={(content) => handleChange("gender", content)}
+                />
+              </Field>
+              <Field>
+                <TextEditor
+                  value={data.data?.age || ""}
+                  onChange={(content) => handleChange("age", content)}
+                />
+              </Field>
+              <Field>
+                <TextEditor
+                  value={data.data?.education || ""}
+                  onChange={(content) => handleChange("education", content)}
+                />
+              </Field>
+              <Field>
+                <TextEditor
+                  value={data.data?.phone || ""}
+                  onChange={(content) => handleChange("phone", content)}
+                />
+              </Field>
+              <Field>
+                <TextEditor
+                  value={data.data?.email || ""}
+                  onChange={(content) => handleChange("email", content)}
+                />
+              </Field>
             </InfoGrid>
             <Field>
-              <Input 
-                placeholder="求职状态"
+              <TextEditor
                 value={data.data?.status || ""}
-                onChange={(e) => handleChange("status", e.target.value)}
+                onChange={(content) => handleChange("status", content)}
               />
             </Field>
           </InfoContainer>
